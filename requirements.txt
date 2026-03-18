@@ -1,0 +1,17 @@
+# STARK LAB v5 – Requirements
+# Install: pip install -r requirements.txt
+
+# Core rendering & windowing
+glfw>=3.13
+PyOpenGL>=3.1.5
+PyOpenGL-accelerate>=3.1.5
+
+# Hand tracking & computer vision
+mediapipe==0.10.14
+opencv-python>=4.8.0
+
+# Numerical computing
+numpy>=1.24.0
+
+# Optional: File dialog support (included in most Python distributions)
+# tkinter  # Usually pre-installed with Python
