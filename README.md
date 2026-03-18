@@ -1,266 +1,275 @@
-# ⚡ STARK LAB v5 – Real-Time Gesture 3D Model Viewer
+# ⚡ STARK LAB — Hand Gesture 3D Viewer
 
-A powerful real-time 3D model viewer that responds to hand gestures captured via webcam. Control 3D models (STL format) using intuitive hand movements powered by **MediaPipe**, **PyOpenGL**, and **GLFW**.
+> *"Sometimes you gotta run before you can walk."* — Tony Stark
 
-![Stark Lab](https://img.shields.io/badge/Version-5.0-blue)
-![Python](https://img.shields.io/badge/Python-3.8%2B-brightgreen)
-![License](https://img.shields.io/badge/License-MIT-yellow)
+Control and inspect 3D models using nothing but your hand gestures — just like Tony Stark in the Iron Man movies. Your webcam tracks your hand in real time using AI, and you can rotate, zoom, and tilt any 3D model without touching your keyboard or mouse.
 
 ---
 
-## 🎯 Features
+## 📸 What It Looks Like
 
-- **Real-time Hand Gesture Recognition** – Webcam-based hand tracking via MediaPipe
-- **Smooth Gesture Controls** – Rotate, zoom, and tilt 3D models with natural hand movements
-- **STL Model Support** – Load binary and ASCII STL files
-- **Hardware-Accelerated 3D** – PyOpenGL with VBO rendering
-- **Fallback Mouse Mode** – Works without webcam using mouse input
-- **Auto-Spin** – Continuous model rotation for presentations
-- **Cross-Platform** – Linux, macOS, Windows support
+```
+┌─────────────────────────────────────────────────────┐
+│  STARK LAB  //  ✋ ROTATE ▶  //  MK1.STL  //  60fps │
+│                                                     │
+│  ┌──────────────┐                                   │
+│  │ ✋  ROTATE   │     [  3D Model spins here  ]     │
+│  │ ─────────── │                                   │
+│  └──────────────┘              ┌──────────────────┐ │
+│                                │  📷 Camera Feed  │ │
+│                                │  (hand landmarks)│ │
+│  ════════════════════════════  └──────────────────┘ │
+└─────────────────────────────────────────────────────┘
+```
 
 ---
 
-## 🎮 Gesture Controls
+## 🖥️ Requirements
 
-| Gesture | Movement | Action |
-|---------|----------|--------|
-| ✋ **Open Hand** | Wave RIGHT | Rotate clockwise (smooth) |
-| ✋ **Open Hand** | Wave LEFT | Rotate counter-clockwise (smooth) |
-| 🤏 **Pinch** | Move UP | Zoom in (smooth) |
-| 🤏 **Pinch** | Move DOWN | Zoom out (smooth) |
-| ☝️ **Point** | Move UP/DOWN | Tilt on X-axis |
-| ✊ **Fist** | (static) | Lock/freeze model position |
-| 👌 **OK Sign** | (static) | Reset all transforms |
+### Hardware
+- A computer with a **webcam** (built-in laptop camera works great)
+- Any modern PC / laptop running **Ubuntu Linux**
 
-**Note:** 2.5 second hold required before switching gestures (prevents accidents). Fist & OK switch instantly.
+### Software
+- Python 3.8 or higher
+- pip3 (Python package manager)
 
-### ⌨️ Keyboard Shortcuts
+---
+
+## 🚀 Installation — Step by Step
+
+### Step 1 — Open Terminal
+Press `Ctrl + Alt + T` to open a terminal window.
+
+### Step 2 — Create a project folder
+```bash
+mkdir ~/starklab
+cd ~/starklab
+```
+
+### Step 3 — Install all required packages
+```bash
+pip3 install pyopengl pyopengl-accelerate glfw numpy opencv-python mediapipe==0.10.9
+```
+
+> ⏳ This may take 2–5 minutes. Let it finish completely.
+
+### Step 4 — Install tkinter (for file dialogs)
+```bash
+sudo apt install python3-tk
+```
+
+### Step 5 — Download the Stark Lab script
+Download `starklab.py` from the project and place it inside `~/starklab/`.
+
+### Step 6 — Get a 3D model (STL file)
+Download any free STL file from one of these websites:
+- 🌐 [thingiverse.com](https://www.thingiverse.com) — search "Iron Man", "robot", "gear"
+- 🌐 [printables.com](https://www.printables.com) — high quality models
+- 🌐 [free3d.com](https://free3d.com) — search and filter by STL format
+
+After downloading, unzip the file if needed. You'll get a file ending in `.stl` or `.STL`.
+
+### Step 7 — Run Stark Lab
+```bash
+cd ~/starklab
+python3 starklab.py /path/to/your/model.stl
+```
+
+**Example:**
+```bash
+python3 starklab.py /home/knight/MK1.STL
+```
+
+---
+
+## 🖐️ Gesture Controls
+
+Hold each gesture steady for **2.5 seconds** to activate it. This prevents accidental switches when moving between gestures. A countdown bar shows on screen while it's activating.
+
+| Gesture | How to do it | What it does |
+|---|---|---|
+| ✋ Open Hand | Spread all 5 fingers open | **Rotate mode** |
+| ↔️ Wave Right | Open hand, move right | Rotate clockwise |
+| ↔️ Wave Left | Open hand, move left | Rotate anti-clockwise |
+| 🤏 Pinch | Touch thumb tip to index tip | **Zoom mode** |
+| ⬆️ Pinch Up | Pinch + move hand upward | Zoom in |
+| ⬇️ Pinch Down | Pinch + move hand downward | Zoom out |
+| ☝️ Point | Extend only index finger | **Tilt mode** — move up/down to tilt |
+| ✊ Fist | Close all fingers into a fist | **Lock** — freezes the model |
+| 👌 OK Sign | Touch thumb + index, others open | **Reset** — back to default view |
+
+> 💡 **Tip:** OK and Fist switch **instantly** — no 2.5s wait needed.
+
+---
+
+## ⌨️ Keyboard Shortcuts
 
 | Key | Action |
-|-----|--------|
-| `S` | Toggle auto-spin |
-| `R` | Reset transforms |
-| `O` | Open STL file dialog |
-| `ESC` | Quit |
+|---|---|
+| `S` | Toggle auto-spin (model spins on its own) |
+| `R` | Reset — return to default position and zoom |
+| `ESC` | Quit Stark Lab |
 
 ---
 
-## ⚙️ Requirements
+## 📂 Loading STL Files
 
-### System Dependencies
+You have 3 ways to load a model:
 
-- **Python 3.8+**
-- **OpenGL** support (most modern GPUs)
-- **Webcam** (optional – falls back to mouse mode)
-
-### Python Packages
-
+**Option 1 — Command line (recommended)**
 ```bash
-pip install -r requirements.txt
+python3 starklab.py /home/yourname/Downloads/model.stl
 ```
 
-**Core dependencies:**
-- `glfw` – Window management
-- `PyOpenGL` – 3D rendering
-- `numpy` – Numerical operations
-- `opencv-python` – Video capture
-- `mediapipe` – Hand gesture recognition
+**Option 2 — Drag and drop**
+1. Run `python3 starklab.py` (no file argument)
+2. Drag any `.stl` file from your file manager onto the Stark Lab window
+3. The model loads instantly with a green flash
+
+**Option 3 — Auto-spin test**
+Once a model is loaded, press `S` to auto-spin it and check it looks right before using gestures.
 
 ---
 
-## 🚀 Quick Start
+## 🔍 What You See On Screen
 
-### 1️⃣ Install Dependencies
+```
+┌─ Gesture Panel (top-left) ──────────────────┐
+│  Coloured bar shows current active gesture   │
+│  Progress bar fills during 2.5s countdown   │
+└──────────────────────────────────────────────┘
 
+┌─ Camera Preview (bottom-right) ─────────────┐
+│  Live webcam feed                            │
+│  Green/white dots = hand landmarks           │
+│  Lines = finger connections                  │
+└──────────────────────────────────────────────┘
+
+┌─ Title Bar ─────────────────────────────────┐
+│  STARK LAB // gesture // filename // fps     │
+└──────────────────────────────────────────────┘
+
+┌─ Blue Grid (floor) ─────────────────────────┐
+│  Holographic floor grid for depth reference  │
+└──────────────────────────────────────────────┘
+```
+
+---
+
+## ⚠️ Troubleshooting
+
+### ❌ `ModuleNotFoundError: No module named 'glfw'`
 ```bash
-# Create virtual environment (recommended)
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install packages
-pip install -r requirements.txt
+pip3 install glfw pyopengl pyopengl-accelerate
 ```
 
-### 2️⃣ Run the App
-
+### ❌ `mediapipe has no attribute 'solutions'`
 ```bash
-# Launch with file dialog
-python3 starklab.py
-
-# Or load an STL file directly
-python3 starklab.py /path/to/model.stl
-
-# Example
-python3 starklab.py MK1.stl
+pip3 uninstall mediapipe -y
+pip3 install mediapipe==0.10.9
 ```
 
-### 3️⃣ Use Hand Gestures
-
-- Position your hand ~30-50cm from webcam
-- Perform gestures to control the model
-- Use keyboard shortcuts as needed
-
----
-
-## 📦 Project Structure
-
-```
-starklab/
-├── README.md                 # This file
-├── requirements.txt          # Python dependencies
-├── starklab.py              # Main application (v5)
-├── files2/
-│   ├── stark_lab.py         # Alternate version
-│   └── venv/                # Virtual environment
-└── stark3d/
-    ├── models/              # STL model files
-    └── requirements.txt
-```
-
----
-
-## 🔧 Development
-
-### Code Architecture
-
-**STLMesh** – Loads and normalizes binary/ASCII STL files
-```python
-mesh = STLMesh()
-mesh.load("model.stl")
-```
-
-**HandTracker** – Captures webcam frames and detects hand landmarks via MediaPipe
-```python
-tracker = HandTracker()
-tracker.start()  # Runs in background thread
-```
-
-**StarkLabRenderer** – Manages OpenGL rendering and gesture processing
-```python
-renderer = StarkLabRenderer()
-renderer.run(stl_path)
-```
-
-### Performance Tips
-
-- Use **binary STL** files (faster loading than ASCII)
-- Smaller models (<100k triangles) for smooth 60 FPS
-- Ensure adequate lighting for hand detection
-- Use `S` to enable auto-spin when hands aren't visible
-
----
-
-## 🎓 Sample Models
-
-Free STL models to test with:
-
-- **Thingiverse** – https://www.thingiverse.com (search "head", "helmet", "gear")
-- **Printables** – https://www.printables.com
-- **Free3D** – https://free3d.com (filter by STL)
-
-**Recommended models:**
-- Iron Man helmet
-- Mechanical gears
-- Anatomical models
-- Architectural components
-
----
-
-## 🐛 Troubleshooting
-
-### MediaPipe not found
+### ❌ `Cannot open webcam`
+Check if your webcam is detected:
 ```bash
-pip install mediapipe==0.10.14
+v4l2-ctl --list-devices
 ```
-
-### No webcam detected
-- Falls back to **mouse mode** automatically
-- Left-click drag to rotate
-- Right-click drag to scale
-
-### Slow performance
-- Reduce model complexity (decimate in Blender)
-- Lower camera resolution in code (change `cv2.resize()` params)
-- Disable auto-spin when not needed
-
-### Hand not detected
-- Ensure good lighting
-- Keep hand 30-50cm from camera
-- Make clear, distinct gestures
-
----
-
-## 🔐 Optional: Intel RealSense Support
-
-For depth-aware hand tracking (advanced):
-
+If your camera is at `/dev/video1` instead of `/dev/video0`, run:
 ```bash
-sudo apt install librealsense2 librealsense2-dev  # Ubuntu
-pip install pyrealsense2
+python3 starklab.py /path/to/model.stl 1
 ```
+(The `1` at the end sets the camera index)
 
-Then uncomment RealSense code in `starklab.py` (see comments in source).
-
----
-
-## 📜 License
-
-MIT License – See LICENSE file for details
-
----
-
-## 🤝 Contributing
-
-Contributions welcome! Areas for improvement:
-
-- [ ] Support for GLTF/GLB models
-- [ ] Multi-hand gesture combos
-- [ ] Haptic feedback integration
-- [ ] WebGL export
-- [ ] Real-time model assembly/disassembly
-
----
-
-## 👤 Author
-
-**Knight** – Stark Gesture Lab Project
-
----
-
-## 📞 Support
-
-For issues, questions, or feature requests:
-1. Check [Troubleshooting](#-troubleshooting) section
-2. Verify all dependencies are installed
-3. Test with sample models first
-4. Open an issue on GitHub
-
----
-
-## 🎬 Quick Reference
-
-### Launch Examples
-
+### ❌ STL file not loading / "no model" in title bar
+Make sure the file path is correct and the file actually exists:
 ```bash
-# Interactive file picker
-python3 starklab.py
-
-# Load specific model
-python3 starklab.py iron_man_helmet.stl
-
-# With activated venv
-source venv/bin/activate && python3 starklab.py
-
-# Run tests (if available)
-python3 -m pytest tests/
+ls -lh /path/to/your/file.stl
 ```
+Note: Linux filenames are **case-sensitive** — `MK1.STL` and `mk1.stl` are different!
 
-### Performance Metrics
+### ❌ Hand not being detected
+- Make sure your hand is clearly visible to the camera
+- Use in a well-lit room — avoid backlighting
+- Keep your hand 30–60 cm from the camera
+- Check the camera preview box (bottom-right) to see what the camera sees
 
-- **Typical FPS:** 30-60 (depending on model complexity)
-- **Hand Detection Latency:** ~100-150ms
-- **Memory Usage:** ~200-500 MB (for large models)
+### ❌ Gestures feel laggy or jittery
+- Close other applications to free up CPU
+- Make sure you're running Python 3.8+
+- Reduce background light noise
 
 ---
 
-**Made with ⚡ for real-time gesture control of 3D models**
+## 📁 Project Structure
+
+```
+~/starklab/
+│
+├── starklab.py          ← Main application (this is all you need)
+├── requirements.txt     ← Package list
+└── README.md            ← This file
+```
+
+---
+
+## 🧠 How It Works (Simple Explanation)
+
+```
+Your Hand
+   ↓
+Webcam captures video frames
+   ↓
+MediaPipe AI detects 21 landmarks on your hand
+   ↓
+Stark Lab classifies the landmark positions into gestures
+   ↓
+Gestures are translated into 3D transforms (rotate / scale / tilt)
+   ↓
+PyOpenGL renders the STL model with the new transform
+   ↓
+You see the model move in real time!
+```
+
+**The 21 hand landmarks MediaPipe tracks:**
+```
+        4
+        |
+    3   8   12  16  20
+    |   |   |   |   |
+    2   7   11  15  19
+    |   |   |   |   |
+    1   6   10  14  18
+     \  |   |   |   |
+      \ 5   9   13  17
+       \|___|___|___|
+            0  (wrist)
+```
+Stark Lab checks whether fingertips (4,8,12,16,20) are above or below their knuckles to decide if each finger is up or down — that's how it tells your gestures apart.
+
+---
+
+## 🛠️ Tech Stack
+
+| Tool | Purpose |
+|---|---|
+| **Python 3** | Programming language |
+| **MediaPipe** | AI hand landmark detection (Google) |
+| **OpenCV** | Webcam capture + camera preview |
+| **PyOpenGL** | 3D rendering engine |
+| **GLFW** | Window creation and input handling |
+| **NumPy** | Fast math for 3D geometry |
+
+---
+
+## 💡 Tips for Best Experience
+
+1. **Good lighting** is the most important factor — sit facing a window or lamp
+2. **Plain background** behind your hand helps detection accuracy
+3. **Hold gestures steady** — wait for the countdown bar to fill before moving
+4. **Start with auto-spin** (`S` key) to verify your model loaded correctly
+5. **Use pinch zoom first** — it's the most satisfying gesture to try!
+
+---
+
+*Built with ❤️ — Inspired by Tony Stark*
