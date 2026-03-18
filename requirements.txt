@@ -2,7 +2,7 @@
 # Install: pip install -r requirements.txt
 
 # Core rendering & windowing
-glfw>=3.13
+glfw>=2.10.0
 PyOpenGL>=3.1.5
 PyOpenGL-accelerate>=3.1.5
 
